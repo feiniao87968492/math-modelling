@@ -1,11 +1,11 @@
 ---
 name: math-modeling
-description: "数学建模标准化工作流。10阶段 checklist 覆盖审题定类、算法选型、创新设计、建模、求解实现、独立验证、敏感性分析、可视化、图片审查、成文准备。支持乱序执行、状态追踪、质量门控、创新证据链。触发词：数学建模、建模流程、新赛题、math-modeling、/math-modeling init、/math-modeling progress、/math-modeling next"
+description: "数学建模竞赛标准化工作流。10阶段 checklist。**触发场景：用户在任何建模项目目录下开始新赛题、审题、算法选型、创新设计、求解实现、敏感性分析、可视化、论文准备。关键词：数学建模、建模流程、竞赛、CUMCM、MCM、泰迪杯、MathorCup、新赛题、/math-modeling。即使用户只说'开始做题'或'第一步做什么'，也应主动调用此 skill 检查进度。**"
 metadata:
   author: zty
-  version: 1.0.0
+  version: 1.1.0
   created: 2026-05-13
-  last_reviewed: 2026-05-13
+  last_reviewed: 2026-05-14
   review_interval_days: 90
 ---
 
@@ -71,6 +71,20 @@ metadata:
 2. 显示 checklist 当前状态（表格形式，高亮未完成/需修订/需人工确认的阶段）
 3. 输出推荐下一阶段
 4. 等待用户选择
+
+### ON_INIT
+
+1. 创建 `modeling_state.yaml` 基础结构
+2. **自动检测已有文件**：
+   - 若 `CLAUDE.md` 存在 → 读取并预填 `project_name`、`problem_id`、`contest`（从标题/元信息提取）
+   - 若 `data/problem_analysis.yaml` 存在 → 标记阶段1为 DONE，记录 outputs
+   - 若 `data/algorithm_selection.yaml` 存在 → 标记阶段2为 DONE
+   - 若 `data/innovation/innovation_design.yaml` 存在 → 标记阶段3为 DONE
+   - 若 `data/model_spec.yaml` 存在 → 标记阶段4为 DONE
+   - 若 `data/results/` 下有结果文件 → 标记阶段5为 DONE（需用户确认是否完整）
+3. 对检测到的已完成阶段，设置 `quality_status: PASS_WITH_WARNINGS`（提示用户确认）
+4. 输出检测摘要："检测到阶段 X-Y 已有产出物，已自动标记。请确认是否需要重新执行。"
+5. 创建缺失目录结构
 
 ### ON_STAGE_ENTER(stage_n)
 
@@ -169,20 +183,26 @@ NOT_STARTED → IN_PROGRESS → DONE
 ```yaml
 tool_policy:
   optimization:
-    primary: "Nextmv MCP"
+    primary: "Gurobi (gurobipy)"
     fallback: ["Python scipy.optimize / pulp / ortools", "MATLAB Optimization Toolbox"]
+    selection_criteria:
+      - MILP with >1000 vars: "Gurobi"
+      - LP/small MILP: "scipy.optimize.linprog / pulp"
+      - NLP: "scipy.optimize.minimize"
   pde_ode:
     primary: "MATLAB MCP"
-    fallback: ["Python scipy.integrate / scipy.sparse"]
-  prediction_evaluation_classification:
-    primary: "Jupyter MCP"
-    fallback: ["Python script in code/python/"]
+    fallback: ["Python scipy.integrate / scipy.sparse / fenics"]
+  prediction:
+    primary: "Python (lightgbm / scikit-learn / statsmodels)"
+    fallback: ["MATLAB MCP"]
+    time_series: "statsmodels.tsa + lightgbm"
+    classification: "scikit-learn"
   visualization:
-    primary: "Python viz_utils"
-    fallback: ["MATLAB MCP (3D/contour等特殊图)"]
+    primary: "Python matplotlib + seaborn"
+    fallback: ["MATLAB MCP (3D/contour/heatmap)"]
   cross_validation:
-    primary: "MATLAB MCP"
-    fallback: ["independent Python implementation", "manual sanity check"]
+    primary: "Python sklearn.model_selection / manual script"
+    fallback: ["MATLAB MCP"]
 ```
 
 工具不可用时不中断流程，记录 fallback_reason 并使用备用方案。
@@ -193,11 +213,10 @@ tool_policy:
 |----------|------|
 | `数学建模算法库.md` | 阶段2 算法选型时查阅 |
 | `templates/python/` | 阶段5 求解时推荐模板 |
-| `templates/matlab/` | 阶段6 验证时推荐模板 |
-| `viz_utils.py` / `.m` | 阶段8 强制使用（PNG+CSV+meta.json） |
-| MATLAB MCP | 阶段6 验证 + 阶段8 特殊图 |
-| Jupyter MCP | 阶段5 探索求解 + 阶段7 敏感性 |
-| Nextmv MCP | 阶段5 运筹优化类求解 |
+| `viz_utils.py` | 阶段8 强制使用（PNG+CSV+meta.json） |
+| MATLAB MCP | 阶段6 验证 + 阶段8 特殊图（3D/contour） |
+| Gurobi | 阶段5 MILP/LP 优化求解主力 |
+| scikit-learn / lightgbm | 阶段5 预测类求解主力 |
 
 ## 质量门控
 
@@ -305,6 +324,77 @@ problem_analysis:
 ### 阶段5 求解实现
 
 产出到 `data/results/` + `code/python/`。原则上对主创新点实现 baseline 与 innovative 对比。
+
+#### 求解器选择逻辑
+
+| 问题类型 | 推荐求解器 | 条件 |
+|----------|------------|------|
+| MILP（混合整数线性规划） | Gurobi | 变量数 > 1000 或有复杂约束 |
+| MILP（小型） | pulp / ortools | 变量数 < 1000 |
+| LP（线性规划） | scipy.optimize.linreg | 简单 LP |
+| NLP（非线性规划） | scipy.optimize.minimize | 无约束或简单约束 |
+| PDE/ODE | MATLAB / scipy.integrate | 数值求解 |
+
+#### Warm Start 策略
+
+对于优化类问题，推荐 warm start 加速收敛：
+
+1. **贪心启发式** → 快速生成初始解
+2. **松弛求解** → LP 松弛 → 固定整数变量 → 剩余 LP
+3. **传递给求解器** → Gurobi `.setSolution()` / pulp `.setInitialValue()`
+
+示例：
+```python
+# 贪心初始解
+init_sol = greedy_heuristic(data)
+model.setSolution(init_sol)
+model.optimize()
+```
+
+#### 代码规范
+
+- **严格类型**：函数签名含返回类型，变量含类型注释
+- **纯函数**：只修改返回值，不修改输入参数或全局状态
+- **错误处理**：仅处理外部 API / 用户输入边界，不处理不可能场景
+- **无默认参数**：所有参数显式传入
+- **DRY/KISS/YAGNI**：不写重复代码、不写过度抽象、不写未请求功能
+
+#### 执行流程
+
+1. 读取 `data/model_spec.yaml` 获取模型定义
+2. 选择求解器（按上表）
+3. 检查是否需要 warm start（优化类）
+4. 编写求解代码到 `code/python/q{N}_solution.py`
+5. 执行并保存结果到 `data/results/result_q{N}.csv`
+6. 记录运行日志到 `logs/run_q{N}.log`
+7. 若有创新点对比 → 生成 `data/results/baseline_vs_innov_q{N}.csv`
+
+#### 质量门控
+
+- [ ] 代码可执行无报错
+- [ ] 结果文件存在且格式正确（CSV/YAML）
+- [ ] 优化问题：检查收敛状态（Gurobi `model.status == GRB.OPTIMAL`）
+- [ ] 预测问题：检查指标是否合理（WAPE/MAPE/RMSE 有值）
+- [ ] 创新对比：baseline 与 innovative 结果均有
+
+#### 输出文件 Schema
+
+`data/results/result_q{N}.csv`：
+```csv
+# 基础结果：决策变量值 / 预测值
+var_name,value,unit
+x1,100,件
+...
+```
+
+`data/results/baseline_vs_innov_q{N}.csv`（如有创新对比）：
+```csv
+method,metric_name,metric_value
+baseline,obj_value,1000
+innovative,obj_value,950
+baseline,run_time_sec,5.2
+innovative,run_time_sec,3.8
+```
 
 ### 阶段6 独立验证
 
