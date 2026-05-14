@@ -59,10 +59,12 @@
 
 | 文件 | 内容 |
 |------|------|
-| `sensitivity_table.csv` | 参数名、扰动值、输出指标值 |
-| `sensitivity_plot.png` | 龙卷风图或蛛网图 |
-| `sensitivity_conclusion.md` | 一段话总结哪些参数敏感 |
-| `sensitivity_meta.json` | 扰动设置元信息 |
+| `data/sensitivity/sensitivity_table.csv` | 参数名、扰动值、输出指标值 |
+| `data/sensitivity/sensitivity_conclusion.md` | 一段话总结哪些参数敏感 |
+| `data/sensitivity/sensitivity_meta.json` | 扰动设置元信息 |
+| `data/figures/fig_sensitivity_qx.png` | 若用于论文，按阶段8规范生成（含 CSV + meta.json） |
+| `data/figures/fig_sensitivity_qx.csv` | 图数据 |
+| `data/figures/fig_sensitivity_qx.meta.json` | 图元信息 |
 
 ## sensitivity_meta.json Schema
 

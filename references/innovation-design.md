@@ -47,12 +47,14 @@
 | validation_score | 是否能通过实验/对比证明有效 | 1-5 |
 | paper_value_score | 是否适合写进论文作为亮点 | 1-5 |
 | risk_score | 实现失败或逻辑牵强的风险 | 1-5 |
+| **grounding_score** | **是否被题意、数据、约束或结果需求支撑** | **1-5** |
 
 ## 综合评分公式
 
 ```
-innovation_total = 0.22*novelty + 0.22*relevance + 0.18*feasibility
-                 + 0.18*validation + 0.15*paper_value + 0.05*(6-risk)
+innovation_total = 0.18*novelty + 0.20*relevance + 0.16*feasibility
+                 + 0.16*validation + 0.12*paper_value
+                 + 0.10*grounding + 0.08*(6-risk)
 ```
 
 其中 `6-risk_score` 将风险转换为正向安全性评分。总分近似在 1-5 区间，用于候选创新点相对排序。
@@ -65,6 +67,7 @@ innovation_total = 0.22*novelty + 0.22*relevance + 0.18*feasibility
 - validation_score ≥ 3
 - paper_value_score ≥ 4
 - risk_score ≤ 3
+- **grounding_score ≥ 3**
 
 ## innovation_design.yaml Schema
 
@@ -93,16 +96,30 @@ innovation_design:
       paper_value_score: 1-5
       risk_score: 1-5
       innovation_total: 计算值
+      grounding_score: 1-5
       comparison_method: "见下方可选值"
       evidence_outputs:
         - "data/results/comparison_q1.csv"
         - "data/figures/fig_innovation.png"
+      evidence_runs:
+        - "run_002"
+        - "run_003_ablation"
       risk: "风险描述"
       validation_plan:
         - "验证步骤1"
         - "验证步骤2"
 
-  selected_innovations: ["innov_01"]
+  selected_innovations:
+    - id: "innov_01"
+      problem: "Q1"
+      name: "指标相关性惩罚权重"
+      evidence_outputs:
+        - "data/results/comparison_q1.csv"
+        - "data/sensitivity/innovation_attribution.md"
+      evidence_runs:
+        - "run_002"
+        - "run_003_ablation"
+      evidence_status: "PENDING"  # PENDING|PARTIAL|COMPLETE
   rejected_innovations:
     - id: "innov_03"
       reason: "拒绝原因"

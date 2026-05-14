@@ -15,7 +15,7 @@
 | 7 | 敏感性分析 | 扰动表 + 敏感性图 + 结论 |
 | 8 | 可视化 | PNG + CSV + meta.json |
 | 9 | 图片审查 | 格式检查 + 内容合理性判断 |
-| 10 | 成文准备 | figure_index + model_summary + innovation_summary |
+| 10 | 成文准备 | figure_index + model_summary + innovation_summary + claim_registry |
 
 ## 安装
 
@@ -34,6 +34,20 @@ git clone https://github.com/feiniao87968492/math-modelling.git ~/.agents/skills
 # 创建 symlink（Claude Code）
 ln -sf ~/.agents/skills/math-modeling ~/.claude/skills/math-modeling
 ```
+
+## 横向质量系统
+
+除10阶段主流程外，内置7个横向质量系统贯穿所有阶段。这些系统**不新增独立阶段**，而是作为质量约束嵌入10阶段流程中；用户仍按10阶段推进。
+
+| 系统 | 职责 | 核心文件 |
+|------|------|----------|
+| Fact Grounding | 事实锚定与反幻觉 | `data/facts/*.yaml` + `references/anti-hallucination.md` |
+| Modeling Memory | 规则记忆与经验沉淀 | `memory.md` + `references/modeling-memory-template.md` |
+| Data Audit | 数据审计 | `references/data-audit.md` |
+| Code Review | 代码审查流水线 | `references/code-review-pipeline.md` |
+| Experiment Tracking | 实验追踪与归因 | `experiments/experiment_log.yaml` |
+| Claim Grounding | 结论证据绑定 | `references/claim-grounding.md` |
+| Final Evidence Gate | 终稿门控 | `references/evidence-gate.md` |
 
 ## 使用
 
@@ -54,15 +68,31 @@ ln -sf ~/.agents/skills/math-modeling ~/.claude/skills/math-modeling
 
 ### 创新设计模块
 
-在算法选型之后、建模之前设计创新点，避免成文阶段临时包装。每个创新点经过 6 维度评分筛选，必须有 baseline 对照和验证方案。
+在算法选型之后、建模之前设计创新点，避免成文阶段临时包装。每个创新点经过 7 维度评分筛选（含 grounding 反幻觉评分），必须有 baseline 对照和验证方案。
+
+### 事实锚定与反幻觉机制
+
+所有题面事实、数据字段、模型假设、约束和论文结论都进入可追溯 registry (`data/facts/`)。任何模型组件和主要结论必须绑定事实来源或实验结果，避免 agent 凭空补充题意或过度解释。
 
 ### 敏感性分析
 
 根据题目类型自动选择策略（评价类权重扰动、优化类参数扰动、PDE 网格敏感性、预测类交叉验证等）。
 
+### 多层代码审查流水线
+
+阶段5求解实现后自动执行 5 层审查：静态代码检查、数据输入检查、模型逻辑检查、结果合理性检查和复现性检查。只有通过审查的结果才能进入后续阶段。
+
+### 实验追踪与创新归因
+
+每次模型改动、参数调整、数据处理变化都记录到 `experiments/experiment_log.yaml`。创新点必须通过 baseline 对比、消融实验或敏感性证据证明有效，避免无法解释的结果提升。
+
 ### 图片审查
 
 格式合规检查（坐标轴、图例、DPI、字号）+ 内容合理性判断（趋势一致性、量级合理性、异常点检测）。审查不通过自动回退重绘，最多 2 次。
+
+### 结论证据绑定
+
+阶段10生成 `claim_registry.yaml`，论文中的关键结论必须绑定结果文件、图表、敏感性分析或验证报告。无证据结论自动标记为不可写入。
 
 ### 配图说明
 
@@ -75,15 +105,18 @@ ln -sf ~/.agents/skills/math-modeling ~/.claude/skills/math-modeling
 ```
 赛题目录/
 ├── modeling_state.yaml      ← 流程状态追踪
+├── memory.md                ← 项目级规则记忆，init 时默认创建，可为空
 ├── data/
 │   ├── raw/                 ← 原始附件
 │   ├── processed/           ← 清洗数据
+│   ├── facts/               ← 事实锚定（problem_facts / assumptions / constraints）
 │   ├── innovation/          ← 创新设计产出
-│   ├── results/             ← 求解结果
-│   ├── sensitivity/         ← 敏感性分析
+│   ├── results/             ← 求解结果 + 代码审查报告
+│   ├── sensitivity/         ← 敏感性分析 + 创新归因
 │   ├── figures/             ← 插图 (PNG+CSV+meta.json)
 │   ├── reviews/             ← 审查报告
-│   └── paper/               ← 论文素材
+│   └── paper/               ← 论文素材 + claim_registry
+├── experiments/             ← 实验追踪日志
 ├── code/
 │   ├── python/
 │   └── matlab/
@@ -94,10 +127,17 @@ ln -sf ~/.agents/skills/math-modeling ~/.claude/skills/math-modeling
 
 | 文件 | 职责 |
 |------|------|
-| `references/innovation-design.md` | 7 类创新方向、评分公式、筛选规则 |
+| `references/innovation-design.md` | 7 类创新方向、评分公式（含 grounding_score）、筛选规则 |
 | `references/sensitivity-analysis.md` | 按题型自动选择敏感性策略 |
 | `references/figure-review.md` | 格式检查表 + 内容审查规则 |
 | `references/caption-spec.md` | meta.json schema + caption 写作规范 |
+| `references/anti-hallucination.md` | 反幻觉规则、事实级别定义、阶段级落地规则 |
+| `references/data-audit.md` | 数据字典、缺失值、异常值、单位、时间泄露审计 |
+| `references/code-review-pipeline.md` | 5层代码审查流水线（静态检查→sanity check→复现性） |
+| `references/experiment-tracking.md` | 实验日志 schema、baseline 对比、消融实验、归因 |
+| `references/claim-grounding.md` | 结论证据绑定、claim registry、allowed_strength |
+| `references/modeling-memory-template.md` | 规则记忆系统模板，6大领域规则 |
+| `references/evidence-gate.md` | 终稿证据门控检查表 |
 
 ## 适配平台
 
