@@ -3,7 +3,7 @@ name: math-modeling
 description: "数学建模标准化工作流。10阶段 checklist 覆盖审题定类、算法选型、创新设计、建模、求解实现、独立验证、敏感性分析、可视化、图片审查、成文准备。支持乱序执行、状态追踪、质量门控、创新证据链。触发词：数学建模、建模流程、新赛题、math-modeling、/math-modeling init、/math-modeling progress、/math-modeling next"
 metadata:
   author: zty
-  version: 1.3.0
+  version: 1.4.0
   created: 2026-05-13
   last_reviewed: 2026-05-19
   review_interval_days: 90
@@ -384,7 +384,7 @@ contest: ""
 problem_id: ""
 created_at: ""
 updated_at: ""
-skill_version: "math-modeling@1.3.0"
+skill_version: "math-modeling@1.4.0"
 state_version: "1.3"
 current_stage: null
 
