@@ -1,0 +1,33 @@
+# Stage 7 — Sensitivity Analysis
+
+## Inputs
+- 阶段 5 结果
+- 阶段 3 的创新点定义
+- 项目根目录 `memory.md`
+
+## Required Reads
+- `references/protocol-human-confirmation.md`
+- `references/protocol-memory-update.md`
+- `references/protocol-state-writeback.md`
+- `references/sensitivity-analysis.md`
+
+## Outputs
+- `data/sensitivity/sensitivity_table.csv`
+- `data/sensitivity/sensitivity_conclusion.md`
+- `data/sensitivity/sensitivity_meta.json`
+- `data/sensitivity/innovation_attribution.md`
+
+## Blocking Confirmation Point
+
+本阶段默认是非阻断确认；但若扰动范围缺乏依据且会改变结论解释方式，则应升级为阻断型待确认项。
+
+## Done When
+- 扰动对象、范围、指标已明确
+- 创新点优先覆盖策略已落实
+- 需要进入论文的图已注册到 `data/figures/`
+- 已执行 `memory check`
+
+## Revision Triggers
+- 扰动范围没有依据
+- 敏感性结果与主结论冲突
+- 创新归因证据不足

@@ -1,0 +1,37 @@
+# Stage 10 — Paper Materials
+
+## Inputs
+- 阶段 1-9 的产物与状态
+- 项目根目录 `memory.md`
+
+## Required Reads
+- `references/protocol-human-confirmation.md`
+- `references/protocol-memory-update.md`
+- `references/protocol-state-writeback.md`
+- `references/claim-grounding.md`
+- `references/evidence-gate.md`
+- `references/caption-spec.md`
+
+## Outputs
+- `data/paper/claim_registry.yaml`
+- `data/paper/final_evidence_check.md`
+- `data/paper/figure_index.md`
+- `data/paper/table_index.md`
+- `data/paper/model_summary.md`
+- `data/paper/innovation_summary.md`
+
+## Blocking Confirmation Point
+
+claim 草稿汇总后、正式导出论文素材前，必须让用户确认主结论、主图表与允许写入论文的创新表述。
+
+## Done When
+- claim registry 已生成
+- Final Evidence Gate 已通过
+- 用户已确认主结论与导出素材
+- 正式导出文件已生成
+- 已执行 `memory check`
+
+## Revision Triggers
+- gate 结果为 `BLOCKED`
+- claim 证据不足
+- 用户否定主结论或导出内容
