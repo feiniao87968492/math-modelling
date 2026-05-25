@@ -17,6 +17,7 @@ The Main Orchestrator loads required protocols, passes scoped inputs to the Vali
 - `references/protocol-human-confirmation.md`
 - `references/protocol-memory-update.md`
 - `references/protocol-state-writeback.md`
+- `references/protocol-readiness-gate.md`
 - `references/sensitivity-analysis.md`
 - `references/protocol-subagent-delegation.md`
 - `references/protocol-rollback.md`
@@ -31,6 +32,15 @@ The Main Orchestrator loads required protocols, passes scoped inputs to the Vali
 ## Blocking Confirmation Point
 
 本阶段默认是非阻断确认；但若扰动范围缺乏依据且会改变结论解释方式，则应升级为阻断型待确认项。
+
+## Readiness Gate
+
+Before writing sensitivity conclusions, classify each perturbation as:
+
+- re-optimization sensitivity: reruns the solver/model under changed parameters
+- post-solution metric perturbation: only recalculates metrics for an already fixed solution
+
+If the paper claim requires strategy stability or optimality under perturbation, post-solution metric perturbation is insufficient. Return `PASS_WITH_LIMITED_CLAIMS`, a branch task for re-optimization, or a rollback request targeting Stage 5.
 
 ## Rollback Triggers
 

@@ -18,6 +18,7 @@ The Main Orchestrator loads required protocols, passes scoped inputs to the Vali
 - `references/protocol-state-writeback.md`
 - `references/claim-grounding.md`
 - `references/evidence-gate.md`
+- `references/protocol-readiness-gate.md`
 - `references/caption-spec.md`
 - `references/protocol-subagent-delegation.md`
 - `references/protocol-rollback.md`
@@ -30,6 +31,17 @@ The Main Orchestrator loads required protocols, passes scoped inputs to the Vali
 - `data/paper/table_index.md`
 - `data/paper/model_summary.md`
 - `data/paper/innovation_summary.md`
+
+## Readiness Gate
+
+Before drafting final paper claims or exporting materials, run readiness gate over every main claim:
+
+- `global_optimum` claims require solver evidence and validation evidence.
+- adjacency/network benefit claims require structured relationship data and reproducible computation.
+- ROI breakpoint claims require multi-budget or parameterized re-optimization evidence.
+- figure and table claims require matching source CSV/meta evidence.
+
+If a claim is not supported at its intended level, downgrade the claim level, block the claim, or generate a rollback request. Do not hide limitations only in prose while keeping a stronger claim in the registry.
 
 ## Blocking Confirmation Point
 

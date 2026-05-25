@@ -43,6 +43,13 @@ subagent_result:
       summary: "Main result is stable within tested perturbation bounds."
       evidence:
         - "data/sensitivity/perturbation_table.csv"
+  readiness_gate:
+    status: "PASS"
+    output_claim_level: "validated_optimum"
+    missing_requirements: []
+    branch_tasks: []
+    allowed_outputs: []
+    blocked_claims: []
   pending_confirmation: null
   rollback_request: null
   memory_check_recommendation:
@@ -52,11 +59,11 @@ subagent_result:
 
 ## Stage-Specific Responsibilities
 
-- Stage 6: Independently validate or request explicit confirmation before skipping validation.
-- Stage 7: Test parameter sensitivity and identify unstable result dependencies.
-- Stage 8: Produce visualization plans and figure metadata consistent with evidence.
+- Stage 6: Independently validate or request explicit confirmation before skipping validation; compare validated claim level against the claim level produced by Stage 5.
+- Stage 7: Test parameter sensitivity and identify unstable result dependencies; distinguish re-optimization sensitivity from post-solution metric perturbation.
+- Stage 8: Produce visualization plans and figure metadata consistent with evidence and allowed claim level.
 - Stage 9: Review figures for readability, captions, and claim consistency.
-- Stage 10: Build claim registry, run evidence gate, and prepare paper materials only after claims are grounded.
+- Stage 10: Build claim registry, run readiness gate plus evidence gate, and prepare paper materials only after claims are grounded.
 
 ## Rollback Request Rule
 

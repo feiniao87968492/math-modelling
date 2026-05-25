@@ -20,6 +20,7 @@ The Main Orchestrator loads required protocols, passes scoped inputs to the Mode
 - `references/protocol-memory-update.md`
 - `references/protocol-state-writeback.md`
 - `references/protocol-subagent-delegation.md`
+- `references/protocol-readiness-gate.md`
 - `references/protocol-rollback.md`
 - `references/subagent-model-building.md`
 - `references/subagent-specialists.md`
@@ -40,6 +41,20 @@ The Main Orchestrator loads required protocols, passes scoped inputs to the Mode
 ## Rollback Response
 
 If this stage receives a `rollback_request`, inspect the affected assumptions, model structure, algorithm choice, implementation outputs, and downstream dependencies before regenerating artifacts. Return a structured `rollback_response` to the Main Orchestrator; do not directly mark downstream stages complete.
+
+## Readiness Gate
+
+Before writing implementation code or producing result tables, return a `readiness_gate` that checks:
+
+- `structured_primary_data`: required raw/processed tables exist and fields are audited
+- `structured_relationship_data`: adjacency, distance, network, graph, or pairing data required by the model exists as machine-readable data
+- `solver_available`: the solver needed by the confirmed algorithm is available or an explicitly confirmed fallback is ready
+- `objective_terms_available`: all cost/revenue/penalty terms can be computed from data or confirmed assumptions
+- `output_claim_level`: the strongest claim supported by current evidence and tooling
+
+If the confirmed model is MILP/global optimization but only heuristic or greedy implementation is available, return `PASS_WITH_LIMITED_CLAIMS` or a blocking status and include blocked claims such as `global optimum` and `true ROI breakpoint`.
+
+If relationship data is present only as an image or prose, create a branch task to structure it before computing network/adjacency benefits.
 
 ## Done When
 - 主求解代码与结果文件已生成

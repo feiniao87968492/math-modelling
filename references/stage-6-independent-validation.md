@@ -17,6 +17,7 @@ The Main Orchestrator loads required protocols, passes scoped inputs to the Vali
 - `references/protocol-memory-update.md`
 - `references/protocol-state-writeback.md`
 - `references/protocol-subagent-delegation.md`
+- `references/protocol-readiness-gate.md`
 - `references/protocol-rollback.md`
 - `references/subagent-validation-paper.md`
 
@@ -31,6 +32,17 @@ The Main Orchestrator loads required protocols, passes scoped inputs to the Vali
 ## Rollback Triggers
 
 If validation, sensitivity analysis, visualization, figure review, claim grounding, or evidence gating exposes a defect in assumptions, model structure, algorithm choice, implementation, result stability, or evidence support from stages 1-5, generate a structured `rollback_request` instead of silently patching downstream artifacts.
+
+## Readiness Gate
+
+Before declaring validation success, compare the validated result against the intended claim level:
+
+- If only hard constraints are validated, allowed claim level is at most `feasible_baseline`.
+- If global optimality is claimed, validation must include solver status, optimality gap, objective reproduction, and constraint checks.
+- If ROI breakpoint is claimed, validation must include multi-budget or parameterized re-optimization evidence.
+- If validation exposes that Stage 5 output has weaker claim support than intended, return either a readiness gate with limited claims or a `rollback_request` targeting Stage 5.
+
+Do not mark validation as fully supporting paper claims when it only checks feasibility.
 
 ## Done When
 - 已完成独立验证，或

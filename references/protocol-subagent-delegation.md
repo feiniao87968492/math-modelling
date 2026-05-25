@@ -121,11 +121,20 @@ subagent_result:
       summary: "Main result is stable within tested perturbation bounds."
       evidence:
         - "data/sensitivity/perturbation_table.csv"
+  readiness_gate:
+    status: "PASS_WITH_LIMITED_CLAIMS"
+    output_claim_level: "feasible_baseline"
+    missing_requirements: []
+    branch_tasks: []
+    allowed_outputs: []
+    blocked_claims: []
   pending_confirmation: null
   rollback_request: null
   memory_check_recommendation:
     action: "no new memory"
     reason: "No reusable modeling rule was discovered."
 ```
+
+If required inputs, tools, relationship data, solver capability, or evidence are missing, `readiness_gate` must describe the missing requirements, branch tasks, allowed outputs, and blocked claims according to `references/protocol-readiness-gate.md`.
 
 If a blocking decision is needed, `pending_confirmation` must be populated. If a previous stage must be revisited, `rollback_request` must be populated according to `references/protocol-rollback.md`.

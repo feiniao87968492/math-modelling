@@ -19,6 +19,7 @@ The Main Orchestrator loads required protocols, passes scoped inputs to the Mode
 - `references/protocol-memory-update.md`
 - `references/protocol-state-writeback.md`
 - `references/protocol-subagent-delegation.md`
+- `references/protocol-readiness-gate.md`
 - `references/protocol-rollback.md`
 - `references/subagent-model-building.md`
 
@@ -32,6 +33,18 @@ The Main Orchestrator loads required protocols, passes scoped inputs to the Mode
 ## Rollback Response
 
 If this stage receives a `rollback_request`, inspect the affected assumptions, model structure, algorithm choice, implementation outputs, and downstream dependencies before regenerating artifacts. Return a structured `rollback_response` to the Main Orchestrator; do not directly mark downstream stages complete.
+
+## Readiness Gate
+
+Before freezing model structure, identify implementation-critical requirements:
+
+- primary data fields required by variables and constraints
+- structured relationship data required by objective terms or constraints
+- solver class required by the selected algorithm
+- objective terms whose parameters are missing or only available as assumptions
+- claims that will require stronger evidence than the current data/tooling can support
+
+If any requirement is missing, return a `readiness_gate` with branch tasks and blocked claims. Do not leave implementation-critical requirements implicit for Stage 5 to discover late.
 
 ## Done When
 - baseline 与 innovation 模型都被明确描述

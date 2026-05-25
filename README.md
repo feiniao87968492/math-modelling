@@ -70,7 +70,11 @@ ln -sf ~/.agents/skills/math-modeling ~/.claude/skills/math-modeling
 - subagent 返回结构化建议，不直接写全局状态；
 - Main Orchestrator 仍然唯一负责 `modeling_state.yaml`、`pending_confirmations`、memory check、用户确认与 rollback 执行。
 
-### 5. rollback request
+### 5. readiness gate 与支线任务
+
+阶段 4/5/6/7/10 在冻结模型、实现求解、验证结论、敏感性结论和论文 claim 前，必须检查关键数据、结构化关系、求解器、目标函数项和证据等级是否足以支撑目标结论。若缺失项会降低可信度，必须创建 branch tasks、限制 claim level，或生成阻断确认，不得静默降级。
+
+### 6. rollback request
 
 阶段 6-10 如果发现阶段 1-5 的题意、假设、模型结构、算法、实现或证据缺陷，不允许静默修补论文表达或图表，而是生成 `rollback_request` 交给 Main Orchestrator 判断。
 
@@ -81,6 +85,17 @@ ln -sf ~/.agents/skills/math-modeling ~/.claude/skills/math-modeling
 - `STRUCTURAL_REVISION`：回到阶段 1-3。
 
 暂不引入外部 full swarm prompt。当前目标是流程稳定性、证据链、状态写回和回滚可控性，而不是增加常驻角色数量。
+
+## Regression checks
+
+readiness gate 可执行检查：
+
+```bash
+python regression/run_readiness_gate_checks.py
+python regression/smoke_readiness_gate_flow.py
+python regression/command_readiness_gate_flow.py
+python -m pytest regression/test_readiness_gate_checks.py regression/test_readiness_gate_smoke_flow.py regression/test_readiness_gate_command_flow.py
+```
 
 ## 使用
 
@@ -124,6 +139,7 @@ ln -sf ~/.agents/skills/math-modeling ~/.claude/skills/math-modeling
 | Human Confirmation | 强阻断人工确认 | `references/protocol-human-confirmation.md` |
 | State Writeback | 状态写回一致性 | `references/protocol-state-writeback.md` |
 | Fallback Control | fallback 与偏离控制 | `references/protocol-fallback-and-deviation.md` |
+| Readiness Gate | 阶段前关键数据、工具、求解器与证据等级检查 | `references/protocol-readiness-gate.md` |
 | Subagent Delegation | Lean Swarm 分工与权限边界 | `references/protocol-subagent-delegation.md` |
 | Rollback Control | 后半阶段发现前半阶段缺陷时的受控回滚 | `references/protocol-rollback.md` |
 
@@ -134,6 +150,7 @@ ln -sf ~/.agents/skills/math-modeling ~/.claude/skills/math-modeling
 - `references/protocol-memory-update.md`
 - `references/protocol-state-writeback.md`
 - `references/protocol-fallback-and-deviation.md`
+- `references/protocol-readiness-gate.md`
 - `references/protocol-subagent-delegation.md`
 - `references/protocol-rollback.md`
 

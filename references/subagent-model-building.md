@@ -37,6 +37,13 @@ subagent_result:
       summary: "Initial result passed sanity checks."
       evidence:
         - "data/results/result_sanity_check.json"
+  readiness_gate:
+    status: "PASS"
+    output_claim_level: "validated_optimum"
+    missing_requirements: []
+    branch_tasks: []
+    allowed_outputs: []
+    blocked_claims: []
   pending_confirmation: null
   rollback_request: null
   rollback_response: null
@@ -50,8 +57,8 @@ subagent_result:
 - Stage 1: Separate facts, assumptions, unknowns, and constraints. Flag ambiguous interpretation before downstream work.
 - Stage 2: Provide 2-3 algorithm candidates, recommendation, risks, and confirmation point before final selection.
 - Stage 3: Propose innovation candidates, score them, and separate paper-worthy innovation from implementation detail.
-- Stage 4: Specify variables, assumptions, constraints, objective functions, and model dependencies.
-- Stage 5: Implement or plan solution code, sanity-check results, and trigger code review when required.
+- Stage 4: Specify variables, assumptions, constraints, objective functions, and model dependencies; identify readiness requirements for implementation before freezing structure.
+- Stage 5: Implement or plan solution code, sanity-check results, and trigger code review when required; return readiness gate findings before using fallback solvers or producing baseline-only results.
 
 ## Rollback Response
 
