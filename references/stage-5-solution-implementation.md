@@ -1,5 +1,13 @@
 # Stage 5 — Solution Implementation
 
+## Owning Subagent
+
+Model-Building Subagent
+
+## Delegation Contract
+
+The Main Orchestrator loads required protocols, passes scoped inputs to the Model-Building Subagent, and receives structured outputs. The subagent may recommend state changes, pending confirmations, memory updates, and rollback responses, but must not write global state.
+
 ## Inputs
 - `data/model_spec.yaml`
 - `data/algorithm_selection.yaml`
@@ -11,6 +19,10 @@
 - `references/protocol-human-confirmation.md`
 - `references/protocol-memory-update.md`
 - `references/protocol-state-writeback.md`
+- `references/protocol-subagent-delegation.md`
+- `references/protocol-rollback.md`
+- `references/subagent-model-building.md`
+- `references/subagent-specialists.md`
 - `references/protocol-fallback-and-deviation.md`
 - `references/code-review-pipeline.md`
 
@@ -24,6 +36,10 @@
 ## Blocking Confirmation Point
 
 若推荐算法无法收敛、工具 fallback 改变方法、结果 sanity check 可能影响论文结论、创新对比不支持原假设，或需要在多组结果中选主结果，必须阻断确认。
+
+## Rollback Response
+
+If this stage receives a `rollback_request`, inspect the affected assumptions, model structure, algorithm choice, implementation outputs, and downstream dependencies before regenerating artifacts. Return a structured `rollback_response` to the Main Orchestrator; do not directly mark downstream stages complete.
 
 ## Done When
 - 主求解代码与结果文件已生成

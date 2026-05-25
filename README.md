@@ -60,6 +60,28 @@ ln -sf ~/.agents/skills/math-modeling ~/.claude/skills/math-modeling
 
 工具 fallback 可以自动发生；但若 fallback 改变了已确认算法、模型结构或证据路径，必须重新请求用户确认。
 
+### 4. Lean Swarm subagent delegation
+
+默认使用 Lean Swarm，而不是 full swarm：
+
+- 阶段 1-5 由 Model-Building Subagent 负责；
+- 阶段 6-10 由 Validation-Paper Subagent 负责；
+- Data-Audit、Code-Review、Figure-Review、Evidence-Gate、Literature/Method Search 等 specialist 只在协议明确触发时调用；
+- subagent 返回结构化建议，不直接写全局状态；
+- Main Orchestrator 仍然唯一负责 `modeling_state.yaml`、`pending_confirmations`、memory check、用户确认与 rollback 执行。
+
+### 5. rollback request
+
+阶段 6-10 如果发现阶段 1-5 的题意、假设、模型结构、算法、实现或证据缺陷，不允许静默修补论文表达或图表，而是生成 `rollback_request` 交给 Main Orchestrator 判断。
+
+默认回滚等级：
+
+- `MINOR_REVISION`：留在阶段 6-10 内修正；
+- `METHOD_REVISION`：回到阶段 5，必要时回到阶段 4；
+- `STRUCTURAL_REVISION`：回到阶段 1-3。
+
+暂不引入外部 full swarm prompt。当前目标是流程稳定性、证据链、状态写回和回滚可控性，而不是增加常驻角色数量。
+
 ## 使用
 
 在 Claude Code 中输入：
@@ -102,6 +124,8 @@ ln -sf ~/.agents/skills/math-modeling ~/.claude/skills/math-modeling
 | Human Confirmation | 强阻断人工确认 | `references/protocol-human-confirmation.md` |
 | State Writeback | 状态写回一致性 | `references/protocol-state-writeback.md` |
 | Fallback Control | fallback 与偏离控制 | `references/protocol-fallback-and-deviation.md` |
+| Subagent Delegation | Lean Swarm 分工与权限边界 | `references/protocol-subagent-delegation.md` |
+| Rollback Control | 后半阶段发现前半阶段缺陷时的受控回滚 | `references/protocol-rollback.md` |
 
 ## references 结构
 
@@ -110,6 +134,8 @@ ln -sf ~/.agents/skills/math-modeling ~/.claude/skills/math-modeling
 - `references/protocol-memory-update.md`
 - `references/protocol-state-writeback.md`
 - `references/protocol-fallback-and-deviation.md`
+- `references/protocol-subagent-delegation.md`
+- `references/protocol-rollback.md`
 
 ### 阶段文件
 - `references/stage-1-problem-understanding.md`
@@ -122,6 +148,11 @@ ln -sf ~/.agents/skills/math-modeling ~/.claude/skills/math-modeling
 - `references/stage-8-visualization.md`
 - `references/stage-9-figure-review.md`
 - `references/stage-10-paper-materials.md`
+
+### Subagent 文件
+- `references/subagent-model-building.md`
+- `references/subagent-validation-paper.md`
+- `references/subagent-specialists.md`
 
 ### 专题规则文件
 - `references/innovation-design.md`

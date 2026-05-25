@@ -1,5 +1,13 @@
 # Stage 9 — Figure Review
 
+## Owning Subagent
+
+Validation-Paper Subagent
+
+## Delegation Contract
+
+The Main Orchestrator loads required protocols, passes scoped inputs to the Validation-Paper Subagent, and receives structured outputs. The subagent may recommend state changes, pending confirmations, memory updates, and rollback requests, but must not write global state.
+
 ## Inputs
 - `data/figures/` 中的图像、CSV、meta.json
 - 项目根目录 `memory.md`
@@ -10,6 +18,9 @@
 - `references/protocol-state-writeback.md`
 - `references/figure-review.md`
 - `references/caption-spec.md`
+- `references/protocol-subagent-delegation.md`
+- `references/protocol-rollback.md`
+- `references/subagent-validation-paper.md`
 
 ## Outputs
 - `data/reviews/` 下的图片审查报告
@@ -17,6 +28,10 @@
 ## Blocking Confirmation Point
 
 若图片趋势与 `expected_pattern` 不一致且无法判断是模型问题还是真实现象，必须阻断确认并停止进入阶段 10。
+
+## Rollback Triggers
+
+If validation, sensitivity analysis, visualization, figure review, claim grounding, or evidence gating exposes a defect in assumptions, model structure, algorithm choice, implementation, result stability, or evidence support from stages 1-5, generate a structured `rollback_request` instead of silently patching downstream artifacts.
 
 ## Done When
 - 所有目标图片都完成格式审查

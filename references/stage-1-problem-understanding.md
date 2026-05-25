@@ -1,5 +1,13 @@
 # Stage 1 — Problem Understanding
 
+## Owning Subagent
+
+Model-Building Subagent
+
+## Delegation Contract
+
+The Main Orchestrator loads required protocols, passes scoped inputs to the Model-Building Subagent, and receives structured outputs. The subagent may recommend state changes, pending confirmations, memory updates, and rollback responses, but must not write global state.
+
 ## Inputs
 - 题面文本
 - `data/raw/` 中已有的原始附件（若存在）
@@ -9,6 +17,9 @@
 - `references/protocol-human-confirmation.md`
 - `references/protocol-memory-update.md`
 - `references/protocol-state-writeback.md`
+- `references/protocol-subagent-delegation.md`
+- `references/protocol-rollback.md`
+- `references/subagent-model-building.md`
 - `references/anti-hallucination.md`
 - 若 `data/raw/` 非空，再读 `references/data-audit.md`
 
@@ -21,6 +32,10 @@
 ## Blocking Confirmation Point
 
 完成事实、未知项、关键假设抽取后，若存在题意多解、关键字段含义不明、子问题输出形式不确定或关键假设影响后续建模结构，则生成阻断型待确认项并停止推进。
+
+## Rollback Response
+
+If this stage receives a `rollback_request`, inspect the affected assumptions, model structure, algorithm choice, implementation outputs, and downstream dependencies before regenerating artifacts. Return a structured `rollback_response` to the Main Orchestrator; do not directly mark downstream stages complete.
 
 ## Done When
 - 事实、推断、未知信息已分层

@@ -54,6 +54,27 @@ metadata:
 3. 进入 `HUMAN_REVIEW_REQUIRED` 后，只允许输出结构化待确认内容，不得继续生成依赖该决策的下游产物。
 4. 沉默不等于同意；只有明确回复才可解除阻断。
 
+## Protocol-First Rule
+
+Before answering, editing, calculating, coding, visualizing, validating, or exporting, identify the active command, stage, and protocol, then read the required reference files.
+
+Rules:
+1. Do not rely on memory of this skill; current reference files are authoritative.
+2. If a protocol or stage might apply, load it before acting.
+3. Before stage execution, identify active stage, required reads, expected outputs, owning subagent, and blocking confirmation point.
+4. If a later stage exposes an earlier-stage defect, follow `references/protocol-rollback.md` instead of silently patching downstream artifacts.
+
+## Subagent Delegation Policy
+
+Default mode is Lean Swarm.
+
+- Stages 1-5 MUST be delegated to Model-Building Subagent.
+- Stages 6-10 MUST be delegated to Validation-Paper Subagent.
+- Specialist subagents MAY be invoked only when their protocol is explicitly triggered.
+- Subagents must return structured outputs, not free-form discussion.
+- Subagents may recommend state changes, but only Main Orchestrator can write global state.
+- Subagents may propose `rollback_request`, but cannot execute rollback directly.
+
 ## 命令分发与必读 references
 
 说明：以下 `references/*.md` 路径默认解析到 **math-modeling skill 包目录**（`~/.agents/skills/math-modeling/` 或其 `.claude` symlink），不是赛题项目根目录。
@@ -61,21 +82,24 @@ metadata:
 | 场景 | 必读文件 |
 |------|----------|
 | invoke / progress / status | `references/protocol-state-writeback.md` |
-| next / stage N | `references/protocol-human-confirmation.md` + `references/protocol-memory-update.md` + 对应 `references/stage-N-*.md` |
-| pending / confirm / approve / reject | `references/protocol-human-confirmation.md` |
-| audit | `references/data-audit.md` + `references/protocol-state-writeback.md` |
-| review | `references/stage-9-figure-review.md` + `references/figure-review.md` + `references/caption-spec.md` |
-| gate / export | `references/stage-10-paper-materials.md` + `references/claim-grounding.md` + `references/evidence-gate.md` + `references/protocol-state-writeback.md` |
+| next / stage N | `references/protocol-human-confirmation.md` + `references/protocol-memory-update.md` + `references/protocol-state-writeback.md` + `references/protocol-subagent-delegation.md` + `references/protocol-rollback.md` + 对应 `references/stage-N-*.md` |
+| pending / confirm / approve / reject | `references/protocol-human-confirmation.md` + `references/protocol-state-writeback.md` |
+| rollback request / rollback response | `references/protocol-rollback.md` + `references/protocol-human-confirmation.md` + `references/protocol-state-writeback.md` + `references/protocol-subagent-delegation.md` |
+| audit | `references/data-audit.md` + `references/protocol-state-writeback.md` + `references/subagent-specialists.md` |
+| review | `references/stage-9-figure-review.md` + `references/figure-review.md` + `references/caption-spec.md` + `references/protocol-subagent-delegation.md` + `references/subagent-specialists.md` |
+| gate / export | `references/stage-10-paper-materials.md` + `references/protocol-human-confirmation.md` + `references/protocol-memory-update.md` + `references/protocol-state-writeback.md` + `references/protocol-subagent-delegation.md` + `references/protocol-rollback.md` + `references/subagent-validation-paper.md` + `references/claim-grounding.md` + `references/evidence-gate.md` |
 
 阶段附加读取：
-- 阶段 1：`references/anti-hallucination.md`
-- 阶段 2：`references/anti-hallucination.md`
-- 阶段 3：`references/innovation-design.md`
-- 阶段 5：`references/code-review-pipeline.md`
-- 阶段 7：`references/sensitivity-analysis.md`
-- 阶段 8：`references/caption-spec.md`
-- 阶段 9：`references/figure-review.md` + `references/caption-spec.md`
-- 阶段 10：`references/claim-grounding.md` + `references/evidence-gate.md` + `references/caption-spec.md`
+- 阶段 1：`references/anti-hallucination.md` + `references/subagent-model-building.md`
+- 阶段 2：`references/anti-hallucination.md` + `references/subagent-model-building.md`
+- 阶段 3：`references/innovation-design.md` + `references/subagent-model-building.md`
+- 阶段 4：`references/subagent-model-building.md`
+- 阶段 5：`references/code-review-pipeline.md` + `references/subagent-model-building.md` + `references/subagent-specialists.md`
+- 阶段 6：`references/subagent-validation-paper.md`
+- 阶段 7：`references/sensitivity-analysis.md` + `references/subagent-validation-paper.md`
+- 阶段 8：`references/caption-spec.md` + `references/subagent-validation-paper.md`
+- 阶段 9：`references/figure-review.md` + `references/caption-spec.md` + `references/subagent-validation-paper.md` + `references/subagent-specialists.md`
+- 阶段 10：`references/claim-grounding.md` + `references/evidence-gate.md` + `references/caption-spec.md` + `references/subagent-validation-paper.md` + `references/subagent-specialists.md`
 
 ## 全局硬约束
 
@@ -87,7 +111,8 @@ metadata:
 6. `pending` 只查看；`confirm` 是唯一写回确认状态的入口，`approve/reject` 只是语义糖。
 7. `quality_status` 必须使用 canonical 全大写蛇形命名，不得混入阶段状态语义。
 8. 若 fallback 不改变工具但改变已确认方法、模型结构或证据路径，必须重新触发阻断确认。
-9. `export` 之前必须通过 Final Evidence Gate。
+9. 阶段 6-10 若发现阶段 1-5 的题意、假设、模型结构、算法、实现或证据缺陷，必须生成 `rollback_request`，不得静默修补下游产物。
+10. `export` 之前必须通过 Final Evidence Gate。
 
 ## 最小 schema 索引
 
@@ -95,8 +120,8 @@ metadata:
 human_interaction:
   pending_confirmations: []
   confirmed_decisions:
-    - decision_id: "decision_001"
-      confirmation_id: "confirm_001"
+    - decision_id: "decision_stage2_001"
+      confirmation_id: "confirm_stage2_001"
       decision: "accept_default"
       selected_option: "A"
       status_after_decision: "DONE"
@@ -116,6 +141,15 @@ quality_systems:
   final_evidence_gate:
     status: "UNKNOWN"
     report: "data/paper/final_evidence_check.md"
+  rollback_requests:
+    - from_stage: 7
+      target_stage: 5
+      severity: "METHOD_REVISION"
+      reason: "sensitivity analysis shows unstable output"
+      evidence: []
+      affected_outputs: []
+      requires_user_confirmation: true
+      recommended_action: "rerun stage 5 with revised parameter bounds"
 ```
 
 ## Reference 地图
@@ -125,6 +159,8 @@ quality_systems:
 - `references/protocol-memory-update.md`
 - `references/protocol-state-writeback.md`
 - `references/protocol-fallback-and-deviation.md`
+- `references/protocol-subagent-delegation.md`
+- `references/protocol-rollback.md`
 
 阶段文件：
 - `references/stage-1-problem-understanding.md`
@@ -137,3 +173,8 @@ quality_systems:
 - `references/stage-8-visualization.md`
 - `references/stage-9-figure-review.md`
 - `references/stage-10-paper-materials.md`
+
+Subagent 文件：
+- `references/subagent-model-building.md`
+- `references/subagent-validation-paper.md`
+- `references/subagent-specialists.md`
