@@ -34,12 +34,22 @@ def test_export_command_flow_allows_export_when_gate_is_clear(tmp_path):
             "pending_decisions": [],
             "final_gate_status": "PASS",
             "claims_supported": True,
+            "paper_grounding_scenario": {
+                "registry_claim_ids": ["c-q1-wape-baseline"],
+                "derivation_targets_present": [],
+                "figure_meta_present": [],
+                "paper_anchors": [
+                    {"kind": "claim", "target": "c-q1-wape-baseline"},
+                ],
+                "paper_figures": [],
+            },
         },
     )
 
     assert result["ok"]
     assert result["export_allowed"] is True
     assert result["blockers"] == []
+    assert result["paper_grounding_scan"]["status"] == "PASS"
 
 
 def test_export_blocks_when_evidence_claim_review_is_missing(tmp_path):

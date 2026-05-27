@@ -1,6 +1,7 @@
 from pathlib import Path
 
 from run_gate_and_rollback_checks import simulate_export_gate
+from run_paper_grounding_scan import run_paper_grounding_scan
 
 EXPORT_REQUIRED_READS = [
     "references/protocol-markdown-audit.md",
@@ -10,6 +11,7 @@ EXPORT_REQUIRED_READS = [
     "references/protocol-subagent-delegation.md",
     "references/evidence-gate.md",
     "references/stage-10-paper-materials.md",
+    "references/protocol-paper-grounding-scan.md",
 ]
 
 
@@ -46,6 +48,25 @@ def run_export_command_flow(
             "export_allowed": False,
         }
 
+    grounding_scenario = scenario.get("paper_grounding_scenario")
+    if grounding_scenario is None:
+        scan = {
+            "status": "BLOCKED",
+            "unresolved_claims": [],
+            "unresolved_derivations": [],
+            "figures_without_meta": [],
+            "blocked_anchors": [],
+            "blockers": ["paper_grounding_scan_not_run"],
+        }
+    else:
+        scan = run_paper_grounding_scan(grounding_scenario)
+
+    blockers = list(gate["blockers"])
+    if scan["status"] == "BLOCKED":
+        blockers.append("paper_grounding_scan_blocked")
+
+    export_allowed = gate["status"] != "BLOCKED" and scan["status"] == "PASS"
+
     return {
         "ok": True,
         "command": {"active_command": "export"},
@@ -55,7 +76,8 @@ def run_export_command_flow(
             "fixed_reviewers": ["Evidence/Claim Reviewer"],
             "risk_triggered_reviewers": ["Evidence-Gate Reviewer", "Figure-Review Reviewer"],
         },
-        "blockers": gate["blockers"],
+        "blockers": blockers,
         "gate_path": "gates/final-evidence-gate.md",
-        "export_allowed": gate["status"] != "BLOCKED",
+        "export_allowed": export_allowed,
+        "paper_grounding_scan": scan,
     }

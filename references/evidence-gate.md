@@ -24,6 +24,7 @@ Do not export paper materials unless `gates/final-evidence-gate.md` explicitly c
 - claim level respected
 - figures reviewed
 - assumptions and constraints recorded
+- paper grounding scan PASS (v4.2; see `references/protocol-paper-grounding-scan.md`)
 
 ## Final Evidence Gate Report Template
 
