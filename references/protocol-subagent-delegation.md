@@ -107,6 +107,11 @@ The main agent must invoke the corresponding reviewer template and target the ma
 - `## Non-blocking warnings`
 - `## Required follow-up`
 - `## Reviewer recommendation`
+- `## Required reads referenced` (v4.2)
+- `## Confidence` (v4.2)
+- `## Forbidden-behavior self-check` (v4.2)
+
+The full output schema and per-section contracts live in `schemas/reviewer-output-schema.md`. The forbidden-behavior items each reviewer must enumerate live in `schemas/reviewer-self-discipline-checklist.md`. A review missing v4.2 sections, malformed Findings, or any `[VIOLATED]` self-check item is NOT a fixed-review-point pass; the main agent must re-spawn the reviewer.
 
 ## Forbidden Reviewer Behavior
 

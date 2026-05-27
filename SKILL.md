@@ -142,6 +142,7 @@ Blocking Question:
 18. `improvements/improvement-frontier.md` 不得在 `reviews/improvement-round-N-skepticism.md` 写入磁盘之前出现"blocked by Skepticism …"或 Skepticism Bk 引用；中立占位"pending Skepticism review"允许。
 19. 多问赛题（项目根存在 `claims/baseline-qK.md`）的 improvement round 必须在 `improvements/round-N.md` 元数据声明 `Target question`；改动若影响非 target question 的主指标，必须在 `## Risk assessment` 写明并附 per-question baseline 对照，Skepticism reviewer 必须就此发表意见。缺声明或缺对照时阻断。
 20. `/math-modeling export` 在 Final Evidence Gate 之前必须运行 paper-grounding scan（见 `references/protocol-paper-grounding-scan.md`）：论文素材中每个数字、公式、图、表必须在 `claims/claim-registry.md` 找到对应 entry，每张图必须有同名 `.meta.json`，每个公式必须链接到 stage-4 模型规格或 stage-7 推导 artifact。任一项缺失即阻断 export，不得仅作为 warning。
+21. reviewer 输出必须遵循 `schemas/reviewer-output-schema.md`：9 段必填章节齐全、每条 Finding 含 Type/Severity/Evidence reference/Recommended action 四字段、`## Confidence` 取值 high/medium/low、`## Forbidden-behavior self-check` 无 `[VIOLATED]`。任一缺失或格式错误即不得作为 fixed-review-point 通过依据，必须重新调度该 reviewer。
 
 ## 典型使用流程
 
