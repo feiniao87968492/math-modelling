@@ -2,12 +2,13 @@
 
 这是一个新的 skill 包，与旧版 `math-modeling` 并存，面向使用 Markdown 审计文档推进数学建模流程的工作方式。
 
-当前版本：**v4.1 — Improvement Loop on Rule-Constrained Workflow**。在 v4 全部硬护栏的基础上新增改进环路（baseline 冻结 + 攻守双 reviewer + improvement frontier + 强阻断的 claim level 升级），允许在 Stage 6 PASS 之后启动多轮可量化的优化迭代，而不绕开任何 v4 协议。
+当前版本：**v4.2 — Improvement Hardening + Competition Realism**。在 v4 + v4.1 全部硬护栏的基础上把 v4.1 协议从"靠主 agent 自觉"提升到"自动验证 + 真实比赛约束对齐"：improve 命令级 harness、reviewer 输出 schema + reviewer-eval、per-question baseline 与 frontier、stage-level time budget（opt-in）、export-time paper grounding scanner。新增 7 条强阻断规则（第 16-22 条），命令表追加 `/math-modeling time` 子命令族。
 
 ## 当前试用状态
 
 - v4 主体：Markdown-first dispatcher、协议文档、10 阶段 contract、scenario regression、command-flow regression。
-- v4.1 增量：`/math-modeling improve` 命令、`claims/baseline-snapshot.md` 冻结、Improvement-Critique 与 Improvement-Skepticism 双 reviewer、`improvements/` 审计目录、4 条新强阻断规则（SKILL.md §强阻断规则 第 12-15 条）、4 条 improvement regression fixture。
+- v4.1 增量：`/math-modeling improve` 命令、`claims/baseline-snapshot.md` 冻结、Improvement-Critique 与 Improvement-Skepticism 双 reviewer、`improvements/` 审计目录、4 条新强阻断规则（SKILL.md §强阻断规则 第 12-15 条）。
+- **v4.2 增量**：5 项硬化全部落地（improve harness / reviewer schema / per-question baseline / time budget / paper grounding scanner）+ 7 条新强阻断规则（第 16-22 条）+ regression 32 → **104 passed**。
 - 如果你准备正式试用或交付评估，先阅读根目录下的 `DELIVERY.md` 交付说明。
 
 ## 适用场景
@@ -166,12 +167,31 @@ feasible_baseline
 python -m pytest -x -q
 ```
 
-预期当前为 **32 passed**，覆盖 markdown contract、readiness gate、gate/rollback、export/rollback command-flow，以及 v4.1 新增的 4 条 improvement fixture：
+预期当前为 **104 passed**，覆盖 markdown contract、readiness gate、gate/rollback、export/rollback command-flow、v4.1 improvement fixture，以及 v4.2 五项硬化的 fixture：
 
-- `regression/improvement-baseline-required.md`
-- `regression/improvement-double-reviewer.md`
-- `regression/improvement-frontier-no-duplicate.md`
-- `regression/improvement-claim-level-no-silent-upgrade.md`
+- v4.1 markdown fixture（4 条）：
+  - `regression/improvement-baseline-required.md`
+  - `regression/improvement-double-reviewer.md`
+  - `regression/improvement-frontier-no-duplicate.md`
+  - `regression/improvement-claim-level-no-silent-upgrade.md`
+- v4.1 实战 dry-run process audit fixture（3 条）：
+  - `regression/improvement-finding-id-consistency.md`
+  - `regression/improvement-decision-preload-coverage.md`
+  - `regression/improvement-frontier-no-premature-skepticism-tag.md`
+- v4.2 #1 improve command-flow（8 条）：`regression/improve-flow-fixtures/`
+- v4.2 #2 reviewer schema + eval（6 ground-truth + 6 expected-flags）：`regression/reviewer-eval/`
+- v4.2 #3 per-question baseline（3 条）：`regression/baseline-per-question/`
+- v4.2 #4 time budget（4 条）：`regression/time-budget/`
+- v4.2 #5 paper grounding scanner（4 条）：`regression/paper-grounding/`
+
+## v4.2 关键参考
+
+- `docs/v4.2-improvement-hardening-plan.md` — v4.2 设计与文件清单
+- `references/protocol-paper-grounding-scan.md` — paper grounding scanner 协议
+- `references/protocol-time-budget.md` — time budget 协议（opt-in）
+- `schemas/reviewer-output-schema.md` — reviewer 输出结构化 schema
+- `schemas/reviewer-self-discipline-checklist.md` — reviewer forbidden behavior 自检清单
+- SKILL.md §强阻断规则 第 16-22 条 — v4.2 七条硬规则
 
 ## v4.1 关键参考
 
