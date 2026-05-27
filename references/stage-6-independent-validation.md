@@ -35,6 +35,9 @@ Fixed or primary reviewer: Validation Reviewer.
 - supported claim level is clear for downstream work
 - on the first PASS or PASS_WITH_WARNINGS, `claims/baseline-snapshot.md` exists per `references/baseline-snapshot-template.md`
 
+## Time budget
+If `time-budget.md` exists in the project root, run `/math-modeling time start 6` and observe advisory threshold per `references/protocol-time-budget.md`. Stage 6 should not be skipped under time pressure; instead lower claim level via readiness gate.
+
 ## Memory Check
 Before finishing this stage work slice, update `memory.md` if a reusable rule, pitfall, counterexample, or user preference was found. Otherwise record `Memory check: no new memory`.
 

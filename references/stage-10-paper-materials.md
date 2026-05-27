@@ -41,6 +41,9 @@ Fixed or primary reviewer: Evidence/Claim Reviewer.
 - blocking issues are either resolved or explicitly documented
 - supported claim level is clear for downstream work
 
+## Time budget
+If `time-budget.md` exists in the project root, run `/math-modeling time start 10` and observe advisory threshold per `references/protocol-time-budget.md`. Stage 10 export must respect hard-deadline rule: `/math-modeling export` is blocked past the hard deadline regardless of advisory state.
+
 ## Memory Check
 Before finishing this stage work slice, update `memory.md` if a reusable rule, pitfall, counterexample, or user preference was found. Otherwise record `Memory check: no new memory`.
 

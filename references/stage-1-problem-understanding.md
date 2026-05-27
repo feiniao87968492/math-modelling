@@ -31,6 +31,9 @@ Fixed or primary reviewer: Algorithm/Model Reviewer.
 - blocking issues are either resolved or explicitly documented
 - supported claim level is clear for downstream work
 
+## Time budget
+If `time-budget.md` exists in the project root, read it before starting and run `/math-modeling time start 1` per `references/protocol-time-budget.md`. Honor advisory threshold and hard-deadline rules. Update the burn-down log on stage close.
+
 ## Memory Check
 Before finishing this stage work slice, update `memory.md` if a reusable rule, pitfall, counterexample, or user preference was found. Otherwise record `Memory check: no new memory`.
 

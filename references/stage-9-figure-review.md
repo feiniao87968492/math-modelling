@@ -31,6 +31,9 @@ Fixed or primary reviewer: Figure-Review Reviewer.
 - blocking issues are either resolved or explicitly documented
 - supported claim level is clear for downstream work
 
+## Time budget
+If `time-budget.md` exists in the project root, run `/math-modeling time start 9` and observe advisory threshold per `references/protocol-time-budget.md`. Stage 9 polish is one of the candidates for partial skip under time pressure (figures must still pass figure-review for export, but extended polish iterations may be cut).
+
 ## Memory Check
 Before finishing this stage work slice, update `memory.md` if a reusable rule, pitfall, counterexample, or user preference was found. Otherwise record `Memory check: no new memory`.
 

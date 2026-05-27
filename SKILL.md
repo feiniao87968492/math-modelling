@@ -37,6 +37,11 @@ metadata:
 | `/math-modeling improve` | 在 baseline 冻结后，调度 Improvement-Critique 与 Improvement-Skepticism 双 reviewer，开启下一轮 improvement round |
 | `/math-modeling improve status` | 输出 improvement frontier 与 log 摘要 |
 | `/math-modeling improve close` | 关闭当前 improvement round，写入 before-vs-after metrics 并更新 frontier |
+| `/math-modeling time` | 输出当前 time budget burn-down 摘要 + 剩余预算 + 风险等级（仅当项目根存在 `time-budget.md`） |
+| `/math-modeling time start N` | 标记 stage N 开始，写入 `time-budget.md` burn-down 日志 |
+| `/math-modeling time stop N` | 标记 stage N 结束，计算 Δh，写入 burn-down 日志 |
+| `/math-modeling time pause N` | 暂停 stage N |
+| `/math-modeling time resume N` | 恢复 stage N |
 
 ## Rule-First Execution
 
@@ -143,6 +148,7 @@ Blocking Question:
 19. 多问赛题（项目根存在 `claims/baseline-qK.md`）的 improvement round 必须在 `improvements/round-N.md` 元数据声明 `Target question`；改动若影响非 target question 的主指标，必须在 `## Risk assessment` 写明并附 per-question baseline 对照，Skepticism reviewer 必须就此发表意见。缺声明或缺对照时阻断。
 20. `/math-modeling export` 在 Final Evidence Gate 之前必须运行 paper-grounding scan（见 `references/protocol-paper-grounding-scan.md`）：论文素材中每个数字、公式、图、表必须在 `claims/claim-registry.md` 找到对应 entry，每张图必须有同名 `.meta.json`，每个公式必须链接到 stage-4 模型规格或 stage-7 推导 artifact。任一项缺失即阻断 export，不得仅作为 warning。
 21. reviewer 输出必须遵循 `schemas/reviewer-output-schema.md`：9 段必填章节齐全、每条 Finding 含 Type/Severity/Evidence reference/Recommended action 四字段、`## Confidence` 取值 high/medium/low、`## Forbidden-behavior self-check` 无 `[VIOLATED]`。任一缺失或格式错误即不得作为 fixed-review-point 通过依据，必须重新调度该 reviewer。
+22. 项目根存在 `time-budget.md` 时，dispatcher 在每次 stage 切换、improvement round 启动、`/math-modeling export` 之前必须读取剩余预算（见 `references/protocol-time-budget.md`）；剩余预算低于阈值（默认 20%）时必须 emit time-pressure advisory 并要求用户确认是否降低 target claim level、精简 stage 工作或触发 model simplification。沉默不等于确认。超过 hard deadline 时 export 必须阻断。`time-budget.md` 缺失时行为与 v4.1 完全一致。
 
 ## 典型使用流程
 
