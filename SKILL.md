@@ -140,6 +140,7 @@ Blocking Question:
 16. improvement round 内 Critique 的 F-ID 是唯一来源；`improvements/round-N.md`、`improvements/improvement-frontier.md`、`decisions/decision-improvement-round-N.md` 不得对 F-ID 重新编号、压缩或重贴标签。
 17. `decisions/decision-improvement-round-N.md` 的 Pre-load 必须列全 Critique + Skepticism 全部 BLOCKING；Options 必须覆盖 Critique 的全部 finding。任一缺失即不得进入 PENDING。
 18. `improvements/improvement-frontier.md` 不得在 `reviews/improvement-round-N-skepticism.md` 写入磁盘之前出现"blocked by Skepticism …"或 Skepticism Bk 引用；中立占位"pending Skepticism review"允许。
+19. 多问赛题（项目根存在 `claims/baseline-qK.md`）的 improvement round 必须在 `improvements/round-N.md` 元数据声明 `Target question`；改动若影响非 target question 的主指标，必须在 `## Risk assessment` 写明并附 per-question baseline 对照，Skepticism reviewer 必须就此发表意见。缺声明或缺对照时阻断。
 
 ## 典型使用流程
 

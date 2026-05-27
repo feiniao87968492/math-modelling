@@ -59,6 +59,8 @@ The main agent must read this file before spawning the Improvement-Critique Revi
 ## Round metadata
 - Round number: N
 - Opened at: YYYY-MM-DD
+- Target question: Q<K> | all                     ← v4.2: required
+- Cross-question impact expected: <list>          ← v4.2: required
 - Target metric: <metric>
 - Marginal threshold: <e.g. WAPE absolute reduction >= 0.01>
 - Target claim level ceiling: <claim level the user wants this round to attempt>
@@ -123,3 +125,64 @@ The main agent must read this file before spawning the Improvement-Critique Revi
 - Do not omit Skepticism findings when blocking risks exist.
 - Do not record a claim level delta upward without a gate file in Required readiness.
 - Do not close a round without updating `improvement-log.md` and `improvement-frontier.md`.
+
+## Per-Question Frontier (v4.2)
+
+Multi-question projects must NOT collapse Tried-and-kept / Tried-and-reverted / Proposed / Abandoned into one global file. Single-question projects keep the single-file form above. Multi-question projects use the index + per-question form.
+
+### When to switch to per-question
+
+Switch when:
+
+- `claims/baseline-snapshot.md` is in index form (i.e. lists `claims/baseline-qK.md` per-question files), or
+- any closed round in `improvement-log.md` declared `Target question` other than `all`.
+
+### File layout
+
+```text
+improvements/improvement-frontier.md    ← index file
+improvements/frontier-q1.md             ← Q1 four-quadrant frontier
+improvements/frontier-q2.md             ← Q2 ...
+improvements/frontier-q3.md             ← Q3 ...
+```
+
+### Index template (`improvements/improvement-frontier.md` in multi-question form)
+
+```markdown
+# Improvement Frontier Index
+
+## Per-question frontiers
+| Question | Per-question file | Active rounds |
+|---|---|---|
+| Q1 | improvements/frontier-q1.md | round-2 (closed), round-5 (closed) |
+| Q2 | improvements/frontier-q2.md | round-3 (closed) |
+| Q3 | improvements/frontier-q3.md | round-1 (closed), round-4 (in progress) |
+
+## Cross-question proposals
+- Proposals that target multiple questions simultaneously live here.
+- Each entry must link to its `improvements/round-N.md` and the per-question entries it touches.
+```
+
+### Per-question template (`improvements/frontier-qK.md`)
+
+```markdown
+# Frontier — Q<K>
+
+## Tried and kept
+- <method change> (round N, gate ref)
+
+## Tried and reverted
+- <method change> (round N, reverted because ...)
+
+## Proposed but not yet attempted
+- <proposal> (source: round N critique)
+
+## Abandoned
+- <method change> (decision: decisions/decision-improvement-round-N.md, reason: ...)
+```
+
+### Per-question forbidden behavior
+
+- Do not duplicate a frontier entry across `improvements/frontier-qK.md` and the index file. The index references but does not enumerate per-question entries.
+- Do not move a proposal to "Tried and kept" in `improvements/frontier-qK.md` while round-N.md `Cross-question impact expected` still has unresolved entries on Q<j ≠ K>.
+- Do not abandon a proposal silently — closing a round without writing the proposal to one of the four quadrants in the correct per-question file is forbidden.

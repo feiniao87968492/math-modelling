@@ -98,3 +98,11 @@ These rules cover process-level defects observed in v4.1 实战 dry-run on 2026-
 - `improvements/improvement-frontier.md` must not annotate a proposal with "blocked by Skepticism Bk" or any Skepticism-attributed Blocking phrase before `reviews/improvement-round-N-skepticism.md` exists on disk.
 - The neutral placeholder "pending Skepticism review" is permitted while waiting; substantive Skepticism risk citations are not.
 - Moving a proposal to "Tried and reverted" or "Abandoned" requires both Critique and Skepticism review files to be present.
+
+### Per-question round metadata (v4.2)
+
+- Multi-question projects must declare `Target question: Q<K>` (or `all` for cross-question proposals) in `improvements/round-N.md` `## Round metadata`. Missing the field blocks synthesis.
+- Multi-question projects must declare `Cross-question impact expected: <list>` in the same metadata block. The list enumerates every Q<j≠K> the round may move and may be empty (`Cross-question impact expected: none`), but the field itself is required.
+- Single-question projects (no `claims/baseline-qK.md` files) MAY omit both fields; absence is treated as `Target question: all`.
+- If `Target question: Q<K>` is declared, `## Risk assessment` must include a per-question baseline comparison row for every Q<j≠K> listed in `Cross-question impact expected`. Skepticism Reviewer must opine on whether the comparison rules out cross-question regression.
+- Closing a round with non-empty `Cross-question impact expected` requires updating every named per-question frontier file (`improvements/frontier-qj.md`), not only the target question's file.
