@@ -75,3 +75,26 @@ The improvement loop never substitutes for these protocols. It composes with the
 - Do not bypass rollback when a round changes confirmed method or model structure.
 - Do not raise claim level without a gate result that justifies it.
 - Do not compare against the previous round; always compare against the baseline snapshot.
+
+## Process Audit Rules
+
+These rules cover process-level defects observed in v4.1 实战 dry-run on 2026-05-27 and are enforced as hard rules:
+
+### Finding ID consistency
+
+- The F-IDs in `improvements/round-N.md` "Critique findings" must match the F-IDs and proposal text in `reviews/improvement-round-N-critique.md` exactly.
+- The F-IDs in `improvements/improvement-frontier.md` "Proposed but not yet attempted" must match the same Critique source.
+- The decision document `decisions/decision-improvement-round-N.md` must not reference an F-ID that the Critique did not declare.
+- Renumbering, compressing, or relabeling Critique F-IDs in any downstream artifact is forbidden.
+
+### Decision pre-load coverage
+
+- `decisions/decision-improvement-round-N.md` "Pre-load Skepticism BLOCKING risks" must enumerate every Blocking risk from `reviews/improvement-round-N-critique.md` and every Blocking risk from `reviews/improvement-round-N-skepticism.md`.
+- The decision Options section must include at least one option that addresses each Critique finding F1..FK; selectively covering only F1..F3 while the Critique declared F1..F7 is forbidden.
+- A decision document with missing Pre-load Blocking risks or uncovered Critique findings must not reach `Status: PENDING`.
+
+### Frontier status tag ordering
+
+- `improvements/improvement-frontier.md` must not annotate a proposal with "blocked by Skepticism Bk" or any Skepticism-attributed Blocking phrase before `reviews/improvement-round-N-skepticism.md` exists on disk.
+- The neutral placeholder "pending Skepticism review" is permitted while waiting; substantive Skepticism risk citations are not.
+- Moving a proposal to "Tried and reverted" or "Abandoned" requires both Critique and Skepticism review files to be present.

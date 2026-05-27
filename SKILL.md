@@ -137,6 +137,9 @@ Blocking Question:
 13. improvement 提议必须经过 Improvement-Critique 与 Improvement-Skepticism 双 reviewer，且经用户 confirm，方可进入实现。
 14. improvement 改动若覆盖已确认方法/模型结构/证据路径，按 v4 既有 fallback 与 rollback 规则处理，不得绕开。
 15. improvement round 不得静默升级 claim level；升级必须由对应 readiness 或 evidence gate 重新评估通过。
+16. improvement round 内 Critique 的 F-ID 是唯一来源；`improvements/round-N.md`、`improvements/improvement-frontier.md`、`decisions/decision-improvement-round-N.md` 不得对 F-ID 重新编号、压缩或重贴标签。
+17. `decisions/decision-improvement-round-N.md` 的 Pre-load 必须列全 Critique + Skepticism 全部 BLOCKING；Options 必须覆盖 Critique 的全部 finding。任一缺失即不得进入 PENDING。
+18. `improvements/improvement-frontier.md` 不得在 `reviews/improvement-round-N-skepticism.md` 写入磁盘之前出现"blocked by Skepticism …"或 Skepticism Bk 引用；中立占位"pending Skepticism review"允许。
 
 ## 典型使用流程
 
